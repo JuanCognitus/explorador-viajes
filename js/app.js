@@ -12,6 +12,9 @@ import {
   actualizarContador,
 } from './ui/ui.js';
 
+// v0.4.0 IMPORTAR PROCESAR PAISES
+import { procesarPaises } from './utils/filters.js';
+
 // v0.2.0 ESTADO DE LA APLICACIÓN
 let paises = [];
 
@@ -21,6 +24,40 @@ const resultsCount = document.querySelector('#results-count');
 
 // v0.2.0 OBTENEMOS EL ELEMENTO MENSAJE INICIAL crear error a proposito
 // const initialMessage = document.querySelector('#initial-message');
+
+// v0.4.0 CONTROLES DEL DOM
+const searchInput = document.querySelector('#search-input');
+const continentFilter = document.querySelector('#continent-filter');
+const sortFilter = document.querySelector('#sort-filter');
+
+// v0.4.0 APLICAR FILTROS
+function aplicarFiltros() {
+  //OBTENER VALORES SELECCIONADOS
+  const texto = searchInput.value;
+  const continente = continentFilter.value;
+  const criterioOrden = sortFilter.value;
+
+  //PROCESAR LOS DATOS
+  const resultados = procesarPaises(paises, texto, continente, criterioOrden);
+
+  // RENDERIZAR LOS RESULTADOS
+  renderPaises(resultados, destinationsContainer);
+
+  // ACTUALIZAR EL CONTADOR
+  actualizarContador(resultados.length, resultsCount);
+}
+
+// v0.4.0 REGISTRAR EVENTOS
+function registrarEventos() {
+  // EVENTO INPUT PARABUSCAR EN TIEMPO REAL
+  searchInput.addEventListener('input', aplicarFiltros);
+
+  // EVENTO CHANGE CUANDO CAMBIA EL CRITERIO DE BUSQUEDA
+  continentFilter.addEventListener('change', aplicarFiltros);
+
+  // EVENTO CHANGE PARA ORDENAMIENTO
+  sortFilter.addEventListener('change', aplicarFiltros);
+}
 
 // CREAMOS LA FUNCION DE INICIALIZACIÓN DE MI APLICACIÓN
 async function init() {
@@ -45,11 +82,11 @@ async function init() {
     return;
   }
 
-  // v0.3.0 RENDERIZAR DESTINOS
-  renderPaises(paises, destinationsContainer);
+  // v0.4.0 BORRAMOS renderPaises y actualizarContador
+  aplicarFiltros();
 
-  // v0.3.0 ACTUALIZAR CONTADOR y eliminamos todo lo de abajo
-  actualizarContador(paises.length, resultsCount);
+  // v0.4.0 REGISTRAR EVENTOS
+  registrarEventos();
 }
 
 // INICIALIZAMOS LA APLICACION
