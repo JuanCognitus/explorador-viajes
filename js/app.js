@@ -148,8 +148,11 @@ function aplicarFiltros() {
   //PROCESAR LOS DATOS
   const resultados = procesarPaises(paises, texto, continente, criterioOrden);
 
+  // OBTENER FAVORITOS ACTUALES
+  const favoritos = obtenerFavoritos();
+
   // RENDERIZAR LOS RESULTADOS
-  renderPaises(resultados, destinationsContainer);
+  renderPaises(resultados, destinationsContainer, 'explorar', favoritos);
 
   // ACTUALIZAR EL CONTADOR
   actualizarContador(resultados.length, resultsCount);
@@ -218,6 +221,8 @@ function manejarAgregarFavoritos(codigo) {
   const agregado = agregarFavorito(pais);
 
   if (agregado) {
+    // ACTUALIZAR TARJETAS
+    aplicarFiltros();
     Swal.fire({
       icon: 'success',
       title: 'Destino guardado',
@@ -364,7 +369,6 @@ function cerrarModalDetalle() {
 
 // CREAMOS LA FUNCION DE INICIALIZACIÓN DE MI APLICACIÓN
 async function init() {
-  console.log('Explorador de Viajes iniciado...');
   resultsCount.textContent = '0 destinos';
 
   // v0.2.0 MOSTRAR ESTADO DE CARGA -> v0.3.0
@@ -372,9 +376,6 @@ async function init() {
 
   // v0.2.0 OBTENER PA´SISES DEADE LA API
   paises = await obtenerPaises();
-
-  // v0.2.0 COMPROBAR RESULTADOS
-  console.log('Paises obtenidos: ', paises);
 
   // v0.3.0 Comprobar si hay paises
   if (paises.length === 0) {

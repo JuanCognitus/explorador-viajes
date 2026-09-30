@@ -79,11 +79,18 @@ export function mostrarFavoritosVacios(contenedor) {
 
 // v0.3.0 ACTUALIZAR CONTADOR
 export function actualizarContador(total, elementoContador) {
-  elementoContador.textContent = `${total} destinos`;
+  // modificar1.0.0
+  const texto = total === 1 ? 'destino' : 'destinos';
+  elementoContador.textContent = `${total} ${texto}`;
 }
 
 // v0.3.0 RENDERIZAR DESTINOS
-export function renderPaises(paises, contenedor, modo = 'explorar') {
+export function renderPaises(
+  paises,
+  contenedor,
+  modo = 'explorar',
+  favoritos = [],
+) {
   // v0.3.0 MOSTRAR MENSAJE SI NO EXISTEN DESTINOS
   if (paises.length === 0) {
     contenedor.innerHTML = /*html*/ `
@@ -125,6 +132,11 @@ export function renderPaises(paises, contenedor, modo = 'explorar') {
       const bandera = pais.flag?.url_png ?? '';
       const codigo = pais.codes?.alpha_3 ?? '';
 
+      // VERIFICAR SI ES FAVORITO
+      const favoritoActivo = favoritos.some(
+        (favorito) => favorito.codes?.alpha_3 === codigo,
+      );
+
       // v0.3.0 FORMATEAR POBLACIÓN con tolocalstring
       const poblacionFormateada = poblacion.toLocaleString('es-Mx');
 
@@ -145,16 +157,19 @@ export function renderPaises(paises, contenedor, modo = 'explorar') {
       </button> 
       `
           : /*html*/ `
-      <button type='button' data-action='favorite' data-country-code='${codigo}' arial-label='Agregar ${nombre} a favoritos' class='px-4
+      <button type='button' data-action='favorite' data-country-code='${codigo}' aria-label='Agregar ${nombre} a favoritos' class='px-4
                     py-2
                     border
-                    border-slate-300
-                    text-slate-600
+                    ${
+                      favoritoActivo
+                        ? 'border-red-300 text-red-600 bg-red-50'
+                        : 'border-slate-300 text-slate-600'
+                    }
                     rounded-lg
                     cursor-pointer
                     hover:bg-slate-100
                     transition'>
-        ♡
+        ${favoritoActivo ? '♥' : '♡'}
       </button>
       `;
 
@@ -307,7 +322,7 @@ export function mostrarDetalle(pais, modal, modalContent) {
 
       </div>
 
-      <button id='btn-close-detail' type='button' arial-label='Cerrar detalle' class='w-10
+      <button id='btn-close-detail' type='button' aria-label='Cerrar detalle' class='w-10
                     h-10
                     flex
                     items-center
