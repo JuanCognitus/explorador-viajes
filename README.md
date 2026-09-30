@@ -12,6 +12,7 @@ Proyecto integrador desarrollado con Javascript, APIs y librerias para explorar 
 - SweetAlert2
 - Git
 - GitHub
+- OpenStreetMap
 
 ## Caracteristicas
 
@@ -31,4 +32,4 @@ La aplicación utiliza una sola página HTML y divide progrsivamente la lógica 
 
 ## Versión actual
 
-v0.4.0 - Aplicar Filtros y criterios de busqueda
+v0.5.0 - Aplicar Ver mas para detalles del Pais y agregar Mapa interactivo

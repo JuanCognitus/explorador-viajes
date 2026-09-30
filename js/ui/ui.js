@@ -205,3 +205,197 @@ export function renderPaises(paises, contenedor) {
 
   contenedor.innerHTML = tarjetas;
 }
+
+// v0.5.0 MOSTRAR DETALLE DEL DESTINO
+export function mostrarDetalle(pais, modal, modalContent) {
+  // OBTENER INFORMACIÓN DEL PAÍS
+  const nombre = pais.names?.common ?? 'Nombre no disponible';
+  const nombreOficial = pais.names?.official ?? 'No disponible';
+  const region = pais.region ?? 'No disponible';
+  const subregion = pais.subregion ?? 'No disponible';
+  const poblacion = pais.population ?? 0;
+  const bandera = pais.flag?.url_png ?? '';
+  const codigo = pais.codes?.alpha_3 ?? '';
+  const capital = pais.capitals?.[0]?.name ?? 'No disponible';
+
+  // COORDENADAS
+  const latitud = pais.coordinates?.lat;
+  const longitud = pais.coordinates?.lng;
+
+  // FORMATEAR POBLACIÓN
+  const poblacionFormateada = poblacion.toLocaleString('es-MX');
+
+  // CREAMOS EL CONTENIDO DE NUESTRO MODAL
+  modalContent.innerHTML = /*html*/ `
+  
+  <article class='bg-white
+            rounded-2xl
+            overflow-hidden
+            shadow-2xl'>
+
+    <!--CABECERA-->
+
+    <div class='flex
+                items-center
+                justify-between
+                gap-4
+                p-6
+                border-b
+                border-slate-200'>
+
+      <div>
+        <p class='text-sm
+                  text-blue-600
+                  font-medium'>
+          ${codigo}
+        </p>
+
+        <h2 class='text-2xl
+                  md:text-3xl
+                  font-bold
+                  text-slate-900'>
+          ${nombre}
+        </h2>
+
+      </div>
+
+      <button id='btn-close-detail' type='button' arial-label='Cerrar detalle' class='w-10
+                    h-10
+                    flex
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-slate-100
+                    text-slate-600
+                    text-xl
+                    cursor-pointer
+                    hover:bg-slate-200'>
+        X
+      </button>
+    
+    </div>
+
+    <!--BANDERA-->
+    <div class='h-64
+        md:h-80
+        bg-slate-100
+        overflow-hidden'>
+      <img src="${bandera}" alt="Bandera de ${nombre}" class='w-full
+            h-full
+            object-cover'>
+    </div>
+
+    <!--INFORMACIÓN-->
+
+    <div class='p-6'>
+      <div class='grid
+            grid-cols-1
+            sm:grid-cols-2
+            lg:grid-cols-3
+            gap-4
+            mb-'>
+        <div class='bg-slate-50
+                rounded-xl
+                p-4'>
+          <p class='text-xs text-slate-500'>
+            Capital
+          </p class='font-semibold text-slate-900'>
+          <p>
+            ${capital}
+          </p>    
+        </div>
+
+        <div class='bg-slate-50
+                rounded-xl
+                p-4'>
+          <p class='text-xs text-slate-500'>
+            Región
+          </p>
+          <p class='font-semibold text-slate-900'>
+            ${region}
+          </p>
+        </div>
+
+        <div class='bg-slate-50
+                rounded-xl
+                p-4'>
+          <p class='text-xs text-slate-500'>
+            Subregion
+          </p>
+          <p class='font-semibold text-slate-900'>
+            ${subregion}
+          </p>
+        </div>
+
+        <div class='bg-slate-50
+                rounded-xl
+                p-4'>
+          <p class='text-xs text-slate-500'>
+            Población
+          </p>
+          <p class='font-semibold text-slate-900'>
+            ${poblacionFormateada}
+          </p>
+        </div>
+
+        <div class='bg-slate-50
+                rounded-xl
+                p-4
+                sm:col-span-2'>
+          <p class='text-xs text-slate-500'>
+            Nombre oficial
+          </p>
+          <p class='font-semibold text-slate-900'>
+            ${nombreOficial}
+          </p>
+        </div>
+      </div>
+
+      <!--MAPA-->
+        <div>
+          <div class='mb-3'>
+            <h3 class='text-xl
+                font-bold
+                text-slate-900'>
+              Ubicación
+            </h3>
+
+            <p class='text-sm text-slate-500'>
+              Centro grografico aproximado del pais
+            </p>
+          </div>
+
+          <div id='destination-map' 
+          class='w-full
+                            h-80
+                            rounded-xl
+                            overflow-hidden
+                            border
+                            border-slate-200'> 
+          </div>
+        </div>
+    </div>
+  
+  </article>
+  `;
+
+  // MOSTRAL MODAL
+  modal.classList.remove('hidden');
+  document.body.classList.add('overflow-hidden');
+
+  // RETONAR DATOS DEL MAPA
+  return {
+    latitud,
+    longitud,
+    nombre,
+  };
+}
+
+// CERRAR DETALLE
+export function cerrarDetalle(modal, modalContent) {
+  modal.classList.add('hidden');
+
+  modalContent.innerHTML = '';
+
+  document.body.classList.remove('overflow-hidden');
+}

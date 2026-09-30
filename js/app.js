@@ -10,10 +10,16 @@ import {
   mostrarError,
   renderPaises,
   actualizarContador,
+  // v0.5.0 ACTUALIZAR IMPORTACIÓN
+  mostrarDetalle,
+  cerrarDetalle,
 } from './ui/ui.js';
 
 // v0.4.0 IMPORTAR PROCESAR PAISES
 import { procesarPaises } from './utils/filters.js';
+
+// v0.5.0 IMPORTAR LEAFLET
+import { crearMapa, destruirMapa } from './ui/mapUI.js';
 
 // v0.2.0 ESTADO DE LA APLICACIÓN
 let paises = [];
@@ -29,6 +35,15 @@ const resultsCount = document.querySelector('#results-count');
 const searchInput = document.querySelector('#search-input');
 const continentFilter = document.querySelector('#continent-filter');
 const sortFilter = document.querySelector('#sort-filter');
+
+// v0.5.0 REFERENCIAS AL MODAL
+const detailModal = document.querySelector('#detail-modal');
+const detailModalContent = document.querySelector('#detail-modal-content');
+
+// v0.5.0 BUSCAR PAIS POR CODIGO
+function obtenerPaisCodigo(codigo) {
+  return paises.find((pais) => pais.codes?.alpha_3 === codigo);
+}
 
 // v0.4.0 APLICAR FILTROS
 function aplicarFiltros() {
@@ -47,6 +62,25 @@ function aplicarFiltros() {
   actualizarContador(resultados.length, resultsCount);
 }
 
+// v0.5.0 ABRIR DETALLE DEL DESTINO
+function abrirDetalle(codigo) {
+  const pais = obtenerPaisCodigo(codigo);
+
+  // SI NO EXISTE MUESTRA UN MENSAJE
+  if (!pais) {
+    console.warn('Pais no encontrado');
+    return;
+  }
+
+  // SI EXISTE
+  const datosMapa = mostrarDetalle(pais, detailModal, detailModalContent);
+
+  // CREAMOS MAPA DEL DESTINO
+  setTimeout(() => {
+    crearMapa(datosMapa.latitud, datosMapa.longitud, datosMapa.nombre);
+  }, 0);
+}
+
 // v0.4.0 REGISTRAR EVENTOS
 function registrarEventos() {
   // EVENTO INPUT PARABUSCAR EN TIEMPO REAL
@@ -57,6 +91,51 @@ function registrarEventos() {
 
   // EVENTO CHANGE PARA ORDENAMIENTO
   sortFilter.addEventListener('change', aplicarFiltros);
+
+  // v0.5.0 ACCIONES DE LAS TARJETAS
+  destinationsContainer.addEventListener('click', (event) => {
+    // Creamos un boton para cerrar el mapa
+    const boton = event.target.closest('[data-action]');
+
+    // Si no hay boton no hagas nada
+    if (!boton) {
+      return;
+    }
+
+    // De lo contrario
+    const accion = boton.dataset.action;
+    const codigo = boton.dataset.countryCode;
+
+    if (accion === 'detail') {
+      abrirDetalle(codigo);
+    }
+  });
+
+  // v0.5.0 CERRRAR MODAL
+  detailModal.addEventListener('click', (event) => {
+    if (event.target.id === 'btn-close-detail') {
+      cerrarModalDetalle();
+    }
+
+    // Cerrar al dar click fuera del modal o contenido
+    if (event.target === detailModal) {
+      cerrarModalDetalle();
+    }
+  });
+
+  // CERRAR CON  TECLA ESCAPE
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !detailModal.classList.contains('hidden')) {
+      cerrarModalDetalle();
+    }
+  });
+}
+
+// v0.5.0 CERRAR MODAL DE DETALLE
+function cerrarModalDetalle() {
+  destruirMapa();
+
+  cerrarDetalle(detailModal, detailModalContent);
 }
 
 // CREAMOS LA FUNCION DE INICIALIZACIÓN DE MI APLICACIÓN
