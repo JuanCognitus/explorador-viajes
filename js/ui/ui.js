@@ -132,6 +132,9 @@ export function renderPaises(
       const bandera = pais.flag?.url_png ?? '';
       const codigo = pais.codes?.alpha_3 ?? '';
 
+      // RETO FINAL -COMENTARIO
+      const comentario = pais.comentario ?? '';
+
       // VERIFICAR SI ES FAVORITO
       const favoritoActivo = favoritos.some(
         (favorito) => favorito.codes?.alpha_3 === codigo,
@@ -173,9 +176,34 @@ export function renderPaises(
       </button>
       `;
 
-      // v0.3.0 CREAR EL HTML DE CADA TARJETA
+      const seccionComentario =
+        modo === 'favoritos'
+          ? /*html*/ `
+          
+          <div class='mt-4 border-t border-slate-200 pt-4'>
+            <label class='mb-2 block text-sm font-semibold text-slate-700'>
+              Mi comentario
+            </label>
+
+            <textarea data-comment-country='${codigo}' 
+                      class='w-full rounded-lg border border-slate-300 p-3 text-sm outline-none focus:border-blue-500' 
+                      rows='3' 
+                      placeholder='Escribe una nota sobre este destino...'>
+                ${comentario}
+            </textarea>
+
+            <button type='button'
+                    data-action='save-comment'
+                    data-country-code='${codigo}'
+                    class='mt-3 w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700'>
+              Guardar comentario
+            </button>
+          </div>
+          `
+          : '';
+
       return /*html*/ `
-    <article class='bg-white
+      <article class='bg-white
             rounded-xl
             border
             border-slate-200
@@ -258,6 +286,9 @@ export function renderPaises(
           <!--ELIMINAMOS EL BOTON Y LO CREAMOS DINAMICO-->
           ${botonFavorito}
         </div>
+
+        <!--RETO FINAL - COMENTARIO-->
+        ${seccionComentario}
 
       </div>
     

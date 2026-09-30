@@ -28,6 +28,7 @@ import {
   agregarFavorito,
   eliminarFavorito,
   esFavorito,
+  actualizarComentario,
 } from './services/favoritesService.js';
 
 // v0.2.0 ESTADO DE LA APLICACIÓN
@@ -268,6 +269,34 @@ async function manejarEliminarFavorito(codigo) {
   });
 }
 
+// RETO FINAL - GUARDAR COMENTARIO
+function manejarGuardarComentario(codigo) {
+  const textarea = document.querySelector(`[data-comment-country='${codigo}']`);
+
+  // VALIDAR TEXTAREA
+  if (!textarea) {
+    return;
+  }
+
+  const comentario = textarea.value.trim();
+
+  // ACTUALIZAR FAVORITO
+  const actualizado = actualizarComentario(codigo, comentario);
+
+  // VALIDACION
+  if (!actualizado) {
+    return;
+  }
+
+  Swal.fire({
+    icon: 'success',
+    title: 'Comentario guardado',
+    text: 'Tu comentario se guardo correctamente',
+    timer: 1800,
+    showConfirmButton: false,
+  });
+}
+
 // v0.5.0 ABRIR DETALLE DEL DESTINO
 function abrirDetalle(codigo) {
   const pais = obtenerPaisCodigo(codigo);
@@ -337,6 +366,11 @@ function registrarEventos() {
     // v0.6.0 REMOVE FAVORITE
     if (accion === 'remove-favorite') {
       manejarEliminarFavorito(codigo);
+    }
+
+    // RETO FINAL - GUARDAR COMENTARIO
+    if (accion === 'save-comment') {
+      manejarGuardarComentario(codigo);
     }
   });
 

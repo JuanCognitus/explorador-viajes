@@ -58,7 +58,11 @@ export function agregarFavorito(pais) {
   }
 
   // En dado caso que no este marcado como favorito
-  favoritos.push(pais);
+  // RETO FINAL - AGREGAR COMENTARIO
+  favoritos.push({
+    ...pais,
+    comentario: '',
+  });
 
   // Guardamos nuestro Favorito en localStorage
   guardarFavoritos(favoritos);
@@ -77,4 +81,26 @@ export function eliminarFavorito(codigo) {
   guardarFavoritos(favoritosActualizados);
 
   return favoritosActualizados;
+}
+
+// RETO FINAL - ACTUALIZAR COMENTARIO
+export function actualizarComentario(codigo, comentario) {
+  // recuperar favoritos
+  const favoritos = obtenerFavoritos();
+
+  // BUSCAR FAVORITO
+  const favorito = favoritos.find((pais) => pais.codes?.alpha_3 === codigo);
+
+  // VALIDAR FAVORITO
+  if (!favorito) {
+    return false;
+  }
+
+  // ACTUALIZAR COMENTARIO
+  favorito.comentario = comentario;
+
+  // GUARDAR CAMBIOS
+  guardarFavoritos(favoritos);
+
+  return true;
 }
