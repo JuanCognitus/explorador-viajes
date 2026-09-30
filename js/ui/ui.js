@@ -45,13 +45,45 @@ export function mostrarError(contenedor) {
     `;
 }
 
+// MOSTRAR FAVORITOS VACÍOS
+export function mostrarFavoritosVacios(contenedor) {
+  contenedor.innerHTML = /*html*/ `
+
+    <div class='col-span-full
+                bg-white
+                border
+                border-dashed
+                border-slate-300
+                rounded-xl
+                p-12
+                text-center'>
+      <div class='text-5xl mb-4'>
+        ♡
+      </div>
+
+      <h3 class='text-xl
+                    font-semibold
+                    text-slate-800
+                    mb-2'>
+        No tienes destinos favoritos
+      </h3>
+
+      <p class='text-slate-500'>
+        Explorar los destinos y guarda los que más te interesen.
+      </p>
+    </div>
+  
+  
+  `;
+}
+
 // v0.3.0 ACTUALIZAR CONTADOR
 export function actualizarContador(total, elementoContador) {
   elementoContador.textContent = `${total} destinos`;
 }
 
 // v0.3.0 RENDERIZAR DESTINOS
-export function renderPaises(paises, contenedor) {
+export function renderPaises(paises, contenedor, modo = 'explorar') {
   // v0.3.0 MOSTRAR MENSAJE SI NO EXISTEN DESTINOS
   if (paises.length === 0) {
     contenedor.innerHTML = /*html*/ `
@@ -95,6 +127,36 @@ export function renderPaises(paises, contenedor) {
 
       // v0.3.0 FORMATEAR POBLACIÓN con tolocalstring
       const poblacionFormateada = poblacion.toLocaleString('es-Mx');
+
+      // v0.6.0 CREAMOS DINAMICAMENTE EL BOTÓN DE FAVORITOS
+      const botonFavorito =
+        modo === 'favoritos'
+          ? /*html*/ `
+      <button type='button' data-action='remove-favorite' data-country-code='${codigo}' class='px-4
+                    py-2
+                    border
+                    border-red-300
+                    text-red-600
+                    rounded-lg
+                    cursor-pointer
+                    hover:bg-red-50
+                    transition'>
+        ♥ Eliminar
+      </button> 
+      `
+          : /*html*/ `
+      <button type='button' data-action='favorite' data-country-code='${codigo}' arial-label='Agregar ${nombre} a favoritos' class='px-4
+                    py-2
+                    border
+                    border-slate-300
+                    text-slate-600
+                    rounded-lg
+                    cursor-pointer
+                    hover:bg-slate-100
+                    transition'>
+        ♡
+      </button>
+      `;
 
       // v0.3.0 CREAR EL HTML DE CADA TARJETA
       return /*html*/ `
@@ -178,22 +240,8 @@ export function renderPaises(paises, contenedor) {
             >
             Ver mas
           </button>
-
-          <button type='button'
-                  data-action='favorite'
-                  data-country-code='${codigo}'
-                  arial-label='Agregar ${nombre} a favoritos'
-                  class='px-4
-                        py-2
-                        border
-                        border-slate-300
-                        text-slate-600
-                        rounded-lg
-                        cursor-pointer
-                        hover:bg-slate-100
-                        transition'>
-            ♡
-          </button>
+          <!--ELIMINAMOS EL BOTON Y LO CREAMOS DINAMICO-->
+          ${botonFavorito}
         </div>
 
       </div>
